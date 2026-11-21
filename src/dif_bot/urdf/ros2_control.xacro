@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+  Control con ros2_control:
+  - Hardware: gz_ros2_control/GazeboSimSystem (interfaz de velocidad por rueda).
+  - Controladores (config/controllers*.yaml):
+      joint_state_broadcaster   -> /joint_states
+      diff_drive_controller     -> cinematica inversa + odometria (/odom)
+  La odometria la calcula el diff_drive_controller (en ROS), igual que en un robot real.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="ros2_control_block">
+
+    <ros2_control name="GazeboSimSystem" type="system">
+      <hardware>
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      </hardware>
+      <joint name="left_wheel_joint">
+        <command_interface name="velocity">
+          <param name="min">-15</param>
+          <param name="max">15</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="right_wheel_joint">
+        <command_interface name="velocity">
+          <param name="min">-15</param>
+          <param name="max">15</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+    </ros2_control>
+
+    <gazebo>
+      <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <xacro:if value="$(arg odom_tf)">
+          <parameters>$(find dif_bot)/config/controllers.yaml</parameters>
+        </xacro:if>
+        <xacro:unless value="$(arg odom_tf)">
+          <parameters>$(find dif_bot)/config/controllers_ekf.yaml</parameters>
+        </xacro:unless>
+        <ros>
+          <remapping>/diff_drive_controller/cmd_vel:=/cmd_vel</remapping>
+          <remapping>/diff_drive_controller/odom:=/odom</remapping>
+        </ros>
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+</robot>

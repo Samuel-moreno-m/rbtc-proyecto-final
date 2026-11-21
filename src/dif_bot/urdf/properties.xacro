@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Geometria (m) y masas (kg) -->
+  <xacro:property name="chassis_l" value="0.40"/>
+  <xacro:property name="chassis_w" value="0.30"/>
+  <xacro:property name="chassis_h" value="0.12"/>
+  <xacro:property name="chassis_m" value="3.0"/>
+  <!-- centro del chasis respecto a base_link (eje de ruedas) -->
+  <xacro:property name="chassis_z" value="0.03"/>
+
+  <xacro:property name="wheel_radius" value="0.05"/>
+  <xacro:property name="wheel_width" value="0.04"/>
+  <xacro:property name="wheel_separation" value="0.34"/>
+  <xacro:property name="wheel_m" value="0.3"/>
+
+  <xacro:property name="caster_radius" value="0.025"/>
+  <xacro:property name="caster_x" value="0.15"/>
+  <xacro:property name="caster_m" value="0.1"/>
+</robot>
