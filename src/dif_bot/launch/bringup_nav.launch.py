@@ -7,7 +7,8 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
+from launch.actions import (DeclareLaunchArgument, GroupAction, IncludeLaunchDescription,
+                            TimerAction)
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
@@ -37,7 +38,7 @@ def generate_launch_description():
     )
     rviz = Node(
         package='rviz2', executable='rviz2', output='screen',
-        condition=IfCondition(LaunchConfiguration('rviz')),
+        condition=IfCondition(LaunchConfiguration('use_rviz')),
         arguments=['-d', os.path.join(pkg, 'rviz', 'nav.rviz')],
         parameters=[{'use_sim_time': True}],
     )
@@ -46,10 +47,12 @@ def generate_launch_description():
         DeclareLaunchArgument('map', default_value=os.path.join(pkg, 'maps', 'warehouse.yaml')),
         DeclareLaunchArgument('use_ros2_control', default_value='false'),
         DeclareLaunchArgument('headless', default_value='false'),
-        DeclareLaunchArgument('rviz', default_value='true'),
+        DeclareLaunchArgument('use_rviz', default_value='true'),
         DeclareLaunchArgument('world', default_value=os.path.join(pkg, 'worlds', 'warehouse.sdf')),
-        sim,
+        # Cada include va en un GroupAction (scoped) para que sus argumentos
+        # (p. ej. rviz:=false de la simulacion) no se filtren a este launch.
+        GroupAction([sim]),
         # se da tiempo a que Gazebo publique /clock y TF antes de arrancar AMCL/Nav2
-        TimerAction(period=5.0, actions=[localization]),
-        TimerAction(period=8.0, actions=[navigation, rviz]),
+        TimerAction(period=5.0, actions=[GroupAction([localization])]),
+        TimerAction(period=8.0, actions=[GroupAction([navigation]), rviz]),
     ])
