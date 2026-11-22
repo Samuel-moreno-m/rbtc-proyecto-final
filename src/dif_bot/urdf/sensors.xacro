@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- ===================== IMU ===================== -->
   <link name="imu_link"/>
   <joint name="imu_joint" type="fixed">
     <parent link="base_link"/>
@@ -30,7 +29,6 @@
     </sensor>
   </gazebo>
 
-  <!-- ===================== LIDAR 2D ===================== -->
   <link name="lidar_link">
     <visual>
       <geometry><cylinder radius="0.04" length="0.05"/></geometry>
@@ -81,7 +79,6 @@
     </sensor>
   </gazebo>
 
-  <!-- ===================== CAMARA ===================== -->
   <link name="camera_link">
     <visual>
       <geometry><box size="0.02 0.06 0.03"/></geometry>
@@ -94,7 +91,6 @@
     <child link="camera_link"/>
     <origin xyz="${chassis_l/2.0 + 0.01} 0 ${chassis_z + 0.03}" rpy="0 0 0"/>
   </joint>
-  <!-- frame optico (convencion REP-103: z hacia adelante) -->
   <link name="camera_optical_link"/>
   <joint name="camera_optical_joint" type="fixed">
     <parent link="camera_link"/>

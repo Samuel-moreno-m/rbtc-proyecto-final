@@ -9,7 +9,6 @@
     </inertial>
   </xacro:macro>
 
-  <!-- cilindro con eje a lo largo de Y (ruedas) -->
   <xacro:macro name="inertial_cylinder_y" params="mass r l">
     <inertial>
       <mass value="${mass}"/>

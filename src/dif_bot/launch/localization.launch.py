@@ -1,7 +1,3 @@
-"""
-Practica 4: localizacion con AMCL sobre el mapa del estudiante.
-  ros2 launch dif_bot localization.launch.py map:=/ruta/a/mapa.yaml
-"""
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -10,7 +6,6 @@ from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-
 
 def generate_launch_description():
     pkg = get_package_share_directory('dif_bot')

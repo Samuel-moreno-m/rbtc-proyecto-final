@@ -1,8 +1,3 @@
-"""
-Practica 5: servidores de navegacion de Nav2 (planner, controller, behaviors, BT navigator...).
-Requiere simulacion + localizacion corriendo.
-  ros2 launch dif_bot navigation.launch.py
-"""
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -11,7 +6,6 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterFile
-
 
 def generate_launch_description():
     pkg = get_package_share_directory('dif_bot')

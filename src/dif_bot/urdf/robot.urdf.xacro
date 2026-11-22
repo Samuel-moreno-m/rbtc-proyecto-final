@@ -1,13 +1,4 @@
 <?xml version="1.0"?>
-<!--
-  dif_bot: robot diferencial con IMU, LiDAR 2D y camara.
-  Argumentos:
-    use_ros2_control  true  -> gz_ros2_control + diff_drive_controller
-                      false -> plugin DiffDrive nativo de Gazebo
-    odom_tf           true  -> el controlador publica TF odom->base_footprint
-                      false -> la TF la publica el EKF (robot_localization)
-    laser_noise       desviacion estandar del ruido gaussiano del LiDAR [m]
--->
 <robot name="dif_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:arg name="use_ros2_control" default="false"/>
@@ -17,7 +8,6 @@
   <xacro:include filename="properties.xacro"/>
   <xacro:include filename="inertial_macros.xacro"/>
 
-  <!-- ===================== ESTRUCTURA ===================== -->
   <link name="base_footprint"/>
 
   <link name="base_link"/>
@@ -27,7 +17,6 @@
     <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
   </joint>
 
-  <!-- Chasis -->
   <link name="chassis_link">
     <visual>
       <geometry><box size="${chassis_l} ${chassis_w} ${chassis_h}"/></geometry>
@@ -47,7 +36,6 @@
     <material>Gazebo/Blue</material>
   </gazebo>
 
-  <!-- Ruedas motrices -->
   <xacro:macro name="wheel" params="side y_sign">
     <link name="${side}_wheel_link">
       <visual>
@@ -75,7 +63,6 @@
   <xacro:wheel side="left" y_sign="1"/>
   <xacro:wheel side="right" y_sign="-1"/>
 
-  <!-- Ruedas locas (esferas sin friccion) -->
   <xacro:macro name="caster" params="name x">
     <link name="${name}_caster_link">
       <visual><geometry><sphere radius="${caster_radius}"/></geometry>
@@ -96,10 +83,8 @@
   <xacro:caster name="front" x="${caster_x}"/>
   <xacro:caster name="rear" x="${-caster_x}"/>
 
-  <!-- ===================== SENSORES ===================== -->
   <xacro:include filename="sensors.xacro"/>
 
-  <!-- ===================== CONTROL ===================== -->
   <xacro:if value="$(arg use_ros2_control)">
     <xacro:include filename="ros2_control.xacro"/>
     <xacro:ros2_control_block/>

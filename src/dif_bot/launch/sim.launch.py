@@ -1,25 +1,3 @@
-"""
-Practica 1 (y base de las demas): simulacion del dif_bot en Gazebo.
-
-Ejemplos:
-  ros2 launch dif_bot sim.launch.py use_ros2_control:=false          # DiffDrive de Gazebo
-  ros2 launch dif_bot sim.launch.py use_ros2_control:=true           # ros2_control
-  ros2 launch dif_bot sim.launch.py use_ros2_control:=true spawn_controllers:=false
-      -> luego activar a mano:
-         ros2 control load_controller --set-state active joint_state_broadcaster
-         ros2 control load_controller --set-state active diff_drive_controller
-  ros2 launch dif_bot sim.launch.py use_ekf:=true                    # Practica 2 (EKF)
-
-Argumentos:
-  use_ros2_control  false | true
-  spawn_controllers true  | false   (solo con ros2_control)
-  use_ekf           false | true    (EKF publica la TF odom->base_footprint)
-  world             ruta a un .sdf  (por defecto worlds/warehouse.sdf)
-  headless          false | true    (Gazebo sin GUI)
-  rviz              true  | false
-  laser_noise       desviacion del ruido del LiDAR [m]
-  x, y, yaw         pose de aparicion
-"""
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -31,10 +9,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 import xacro
 
-
 def _bool(context, name):
     return context.launch_configurations[name].lower() in ('true', '1', 'yes')
-
 
 def launch_setup(context, *args, **kwargs):
     pkg = get_package_share_directory('dif_bot')
@@ -49,7 +25,6 @@ def launch_setup(context, *args, **kwargs):
     y = context.launch_configurations['y']
     yaw = context.launch_configurations['yaw']
 
-    # ---------- Descripcion del robot ----------
     robot_description = xacro.process_file(
         os.path.join(pkg, 'urdf', 'robot.urdf.xacro'),
         mappings={
@@ -66,7 +41,6 @@ def launch_setup(context, *args, **kwargs):
         parameters=[{'robot_description': robot_description, 'use_sim_time': True}],
     )
 
-    # ---------- Gazebo ----------
     gz_args = f'-r -v 2 {world}'
     if headless:
         gz_args = f'-s --headless-rendering {gz_args}'
@@ -84,7 +58,6 @@ def launch_setup(context, *args, **kwargs):
                    '-x', x, '-y', y, '-z', '0.02', '-Y', yaw],
     )
 
-    # ---------- Puentes ROS <-> Gazebo ----------
     bridges = [Node(
         package='ros_gz_bridge', executable='parameter_bridge', name='bridge_sensors',
         output='screen',
@@ -108,9 +81,7 @@ def launch_setup(context, *args, **kwargs):
 
     actions = [rsp, gazebo, spawn, *bridges]
 
-    # ---------- ros2_control: spawners ----------
     if use_ros2_control and spawn_controllers:
-        # timeouts amplios: en equipos lentos / WSL la activacion puede tardar mas de 5 s
         timeouts = ['--controller-manager-timeout', '60',
                     '--switch-timeout', '30', '--service-call-timeout', '30']
         jsb = Node(package='controller_manager', executable='spawner', output='screen',
@@ -122,7 +93,6 @@ def launch_setup(context, *args, **kwargs):
             RegisterEventHandler(OnProcessExit(target_action=jsb, on_exit=[ddc])),
         ]
 
-    # ---------- EKF (Practica 2) ----------
     if use_ekf:
         actions.append(Node(
             package='robot_localization',
@@ -133,7 +103,6 @@ def launch_setup(context, *args, **kwargs):
             remappings=[('odometry/filtered', '/odom_filtered')],
         ))
 
-    # ---------- RViz ----------
     if rviz:
         actions.append(TimerAction(period=3.0, actions=[Node(
             package='rviz2', executable='rviz2', output='screen',
@@ -142,7 +111,6 @@ def launch_setup(context, *args, **kwargs):
         )]))
 
     return actions
-
 
 def generate_launch_description():
     pkg = get_package_share_directory('dif_bot')

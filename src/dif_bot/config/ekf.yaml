@@ -1,23 +1,17 @@
-# Practica 2 - EKF 2D con robot_localization
-# Fusiona: odometria de ruedas (/odom) + IMU (/imu)
-# Publica: /odom_filtered (nav_msgs/Odometry) y la TF odom -> base_footprint
 ekf_filter_node:
   ros__parameters:
     use_sim_time: true
     frequency: 30.0
     sensor_timeout: 0.1
-    two_d_mode: true            # robot plano: ignora z, roll, pitch
+    two_d_mode: true
     publish_tf: true
     print_diagnostics: true
 
     map_frame: map
     odom_frame: odom
     base_link_frame: base_footprint
-    world_frame: odom           # EKF "local": continuo, sin saltos (REP-105)
+    world_frame: odom
 
-    # ---------- Odometria de ruedas ----------
-    # Orden: [x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az]
-    # Se fusionan VELOCIDADES (vx, vy, vyaw): la posicion la integra el filtro.
     odom0: /odom
     odom0_config: [false, false, false,
                    false, false, false,
@@ -28,8 +22,6 @@ ekf_filter_node:
     odom0_relative: false
     odom0_queue_size: 10
 
-    # ---------- IMU ----------
-    # Se fusiona la velocidad angular en z (giroscopio) y la aceleracion lineal en x.
     imu0: /imu
     imu0_config: [false, false, false,
                   false, false, false,
@@ -40,7 +32,3 @@ ekf_filter_node:
     imu0_relative: true
     imu0_queue_size: 10
     imu0_remove_gravitational_acceleration: true
-
-    # process_noise_covariance / initial_estimate_covariance: se usan los valores por defecto
-    # de robot_localization (matrices 15x15). Si se ajustan, escribir todos los valores como
-    # flotantes (0.0, no 0) o el parser de parametros de ROS 2 los rechaza.

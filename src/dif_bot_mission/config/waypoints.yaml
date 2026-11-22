@@ -1,12 +1,10 @@
-# Waypoints de la mision (frame "map"). Coordenadas para worlds/warehouse.sdf:
-# el robot aparece en (0,0,0), que coincide con el origen del mapa generado por SLAM.
 mission:
   name: "Ronda de inspeccion de bodega"
   frame_id: map
-  mode: sequential          # sequential | follow_waypoints
-  loops: 1                  # 0 = repetir indefinidamente
-  goal_timeout: 120.0       # s maximos por waypoint
-  set_initial_pose: false   # AMCL ya inicia en (0,0,0) (amcl.yaml)
+  mode: sequential
+  loops: 1
+  goal_timeout: 120.0
+  set_initial_pose: false
   initial_pose: {x: 0.0, y: 0.0, yaw: 0.0}
 
   waypoints:

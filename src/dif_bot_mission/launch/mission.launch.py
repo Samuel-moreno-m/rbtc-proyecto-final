@@ -1,8 +1,3 @@
-"""
-Proyecto final: nodo de misiones.
-  ros2 launch dif_bot_mission mission.launch.py [waypoints_file:=/ruta/waypoints.yaml]
-  ros2 service call /mission/start std_srvs/srv/Trigger
-"""
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -10,7 +5,6 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-
 
 def generate_launch_description():
     pkg = get_package_share_directory('dif_bot_mission')

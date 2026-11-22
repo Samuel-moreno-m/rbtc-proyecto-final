@@ -1,7 +1,6 @@
-# Controladores ros2_control (modo sin EKF: el diff_drive_controller publica la TF odom->base_footprint)
 controller_manager:
   ros__parameters:
-    update_rate: 50  # Hz
+    update_rate: 50
     use_sim_time: true
 
     joint_state_broadcaster:

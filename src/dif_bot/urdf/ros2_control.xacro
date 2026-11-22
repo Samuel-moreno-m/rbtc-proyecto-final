@@ -1,12 +1,4 @@
 <?xml version="1.0"?>
-<!--
-  Control con ros2_control:
-  - Hardware: gz_ros2_control/GazeboSimSystem (interfaz de velocidad por rueda).
-  - Controladores (config/controllers*.yaml):
-      joint_state_broadcaster   -> /joint_states
-      diff_drive_controller     -> cinematica inversa + odometria (/odom)
-  La odometria la calcula el diff_drive_controller (en ROS), igual que en un robot real.
--->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="ros2_control_block">
 

@@ -1,11 +1,4 @@
 <?xml version="1.0"?>
-<!--
-  Control con el plugin DiffDrive nativo de Gazebo (gz-sim).
-  - Suscribe gz:/cmd_vel  (gz.msgs.Twist)  <- puente desde ROS /cmd_vel (TwistStamped)
-  - Publica  gz:/odom     (gz.msgs.Odometry) -> puente a ROS /odom
-  - Publica  gz:/tf       (odom -> base_footprint); solo se puentea a ROS si no hay EKF
-  La odometria se calcula DENTRO del simulador a partir de la velocidad de las ruedas.
--->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <gazebo>
     <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">

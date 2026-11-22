@@ -1,4 +1,3 @@
-# Puente para el modo DiffDrive nativo de Gazebo (use_ros2_control:=false)
 - ros_topic_name: "/cmd_vel"
   gz_topic_name: "/cmd_vel"
   ros_type_name: "geometry_msgs/msg/TwistStamped"

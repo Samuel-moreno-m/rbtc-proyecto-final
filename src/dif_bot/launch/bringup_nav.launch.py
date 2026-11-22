@@ -1,8 +1,3 @@
-"""
-Todo en uno para el proyecto final / video:
-  Gazebo + robot + EKF + map_server/AMCL + Nav2 + RViz
-  ros2 launch dif_bot bringup_nav.launch.py map:=/ruta/a/mapa.yaml [use_ros2_control:=true]
-"""
 import os
 
 from ament_index_python.packages import get_package_share_directory
@@ -13,7 +8,6 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-
 
 def generate_launch_description():
     pkg = get_package_share_directory('dif_bot')
@@ -49,10 +43,7 @@ def generate_launch_description():
         DeclareLaunchArgument('headless', default_value='false'),
         DeclareLaunchArgument('use_rviz', default_value='true'),
         DeclareLaunchArgument('world', default_value=os.path.join(pkg, 'worlds', 'warehouse.sdf')),
-        # Cada include va en un GroupAction (scoped) para que sus argumentos
-        # (p. ej. rviz:=false de la simulacion) no se filtren a este launch.
         GroupAction([sim]),
-        # se da tiempo a que Gazebo publique /clock y TF antes de arrancar AMCL/Nav2
         TimerAction(period=5.0, actions=[GroupAction([localization])]),
         TimerAction(period=8.0, actions=[GroupAction([navigation]), rviz]),
     ])

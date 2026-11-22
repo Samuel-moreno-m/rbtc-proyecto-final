@@ -1,7 +1,6 @@
-# Igual que controllers.yaml, pero enable_odom_tf=false: la TF odom->base_footprint la publica el EKF.
 controller_manager:
   ros__parameters:
-    update_rate: 50  # Hz
+    update_rate: 50
     use_sim_time: true
 
     joint_state_broadcaster:

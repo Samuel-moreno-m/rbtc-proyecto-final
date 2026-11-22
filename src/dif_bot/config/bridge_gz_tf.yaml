@@ -1,5 +1,3 @@
-# TF odom->base_footprint calculada por el DiffDrive de Gazebo.
-# Solo se usa cuando NO corre el EKF (si no, habria dos publicadores de la misma TF).
 - ros_topic_name: "/tf"
   gz_topic_name: "/tf_gz"
   ros_type_name: "tf2_msgs/msg/TFMessage"

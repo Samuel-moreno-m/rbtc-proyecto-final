@@ -1,19 +1,3 @@
-#!/usr/bin/env python3
-"""
-Nodo de misiones autonomas para el dif_bot (Proyecto Final).
-
-- Lee los waypoints desde un archivo YAML (parametro `waypoints_file`).
-- Expone servicios std_srvs/Trigger:
-      /mission/start    -> inicia la mision (no bloquea; corre en un hilo)
-      /mission/cancel   -> cancela la mision en curso
-      /mission/reload   -> vuelve a leer el YAML
-- Publica el estado en /mission/status (std_msgs/String) para RQT / terminal.
-- Usa nav2_simple_commander.BasicNavigator para enviar las metas a Nav2.
-
-Modos (campo `mode` del YAML):
-  sequential        goToPose() por cada waypoint, con espera configurable en cada uno.
-  follow_waypoints  un solo followWaypoints() con todos los puntos (waypoint_follower de Nav2).
-"""
 import math
 import threading
 import time
@@ -27,10 +11,8 @@ from rclpy.node import Node
 from std_msgs.msg import String
 from std_srvs.srv import Trigger
 
-
 def yaw_to_quaternion(yaw):
     return 0.0, 0.0, math.sin(yaw / 2.0), math.cos(yaw / 2.0)
-
 
 class MissionNode(Node):
 
@@ -44,8 +26,6 @@ class MissionNode(Node):
         self.create_service(Trigger, '/mission/cancel', self._on_cancel)
         self.create_service(Trigger, '/mission/reload', self._on_reload)
 
-        # BasicNavigator es un nodo independiente; solo se usa desde el hilo de la mision,
-        # asi que nunca se hace spin concurrente sobre el.
         self.navigator = BasicNavigator(node_name='mission_navigator')
         self._nav2_ready = False
         self._worker = None
@@ -56,7 +36,6 @@ class MissionNode(Node):
         self._status(msg if ok else f'ERROR: {msg}')
         self._status('Listo. Llame a /mission/start para iniciar la mision.')
 
-    # ------------------------------------------------------------------ utilidades
     def _status(self, text):
         self.get_logger().info(text)
         self.status_pub.publish(String(data=text))
@@ -85,7 +64,7 @@ class MissionNode(Node):
             self.mission = data
             return True, f'Mision "{data.get("name", "sin nombre")}" cargada: {len(wps)} waypoints, ' \
                          f'modo={data["mode"]}, vueltas={data["loops"]} ({path})'
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             return False, f'no se pudo leer {path}: {e}'
 
     def _make_pose(self, wp):
@@ -105,13 +84,12 @@ class MissionNode(Node):
         try:
             res = self.navigator.result_future.result().result
             return f'error_code={res.error_code} {getattr(res, "error_msg", "")}'.strip()
-        except Exception:  # noqa: BLE001
+        except Exception:
             return 'sin detalle'
 
     def _busy(self):
         return self._worker is not None and self._worker.is_alive()
 
-    # ------------------------------------------------------------------ servicios
     def _on_start(self, request, response):
         if self._busy():
             response.success = False
@@ -151,7 +129,6 @@ class MissionNode(Node):
         self._status(msg if ok else f'ERROR: {msg}')
         return response
 
-    # ------------------------------------------------------------------ mision
     def _run_mission(self):
         m = self.mission
         t0 = time.monotonic()
@@ -184,11 +161,10 @@ class MissionNode(Node):
             state = 'CANCELADA' if self._cancel_requested.is_set() else 'COMPLETADA'
             self._status(f'Mision {state}: {reached} waypoints alcanzados, {failed} fallidos, '
                          f'{elapsed:.1f} s')
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             self._status(f'ERROR en la mision: {e}')
 
     def _wait_task(self, describe, timeout):
-        """Espera a que termine la tarea actual de Nav2. Devuelve TaskResult."""
         start = time.monotonic()
         last_log = 0.0
         canceled = False
@@ -258,13 +234,9 @@ class MissionNode(Node):
             return n - len(missed), len(missed)
         return 0, n
 
-
 def main(args=None):
     rclpy.init(args=args)
     node = MissionNode()
-    # El nodo de servicios usa su PROPIO executor: BasicNavigator hace
-    # spin_until_future_complete() con el executor global desde el hilo de la mision,
-    # y dos spins sobre el mismo executor lanzan "Executor is already spinning".
     executor = SingleThreadedExecutor()
     executor.add_node(node)
     try:
@@ -277,7 +249,6 @@ def main(args=None):
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()
