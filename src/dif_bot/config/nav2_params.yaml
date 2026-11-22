@@ -8,7 +8,9 @@ bt_navigator:
     robot_base_frame: base_footprint
     odom_topic: /odom_filtered
     bt_loop_duration: 10
-    default_server_timeout: 20
+    # ms que un nodo del BT espera respuesta de un servidor de acciones. 20 (valor de nav2_bringup)
+    # falla con error 107 en equipos cargados (WSL + Gazebo + RViz); 100 da margen.
+    default_server_timeout: 100
     wait_for_service_timeout: 1000
     filter_duration: 0.3
     navigators: ["navigate_to_pose", "navigate_through_poses"]
