@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot name="dif_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="use_ros2_control" default="false"/>
+  <xacro:arg name="odom_tf" default="true"/>
+  <xacro:arg name="laser_noise" default="0.01"/>
+
+  <xacro:include filename="properties.xacro"/>
+  <xacro:include filename="inertial_macros.xacro"/>
+
+  <link name="base_footprint"/>
+
+  <link name="base_link"/>
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <link name="chassis_link">
+    <visual>
+      <geometry><box size="${chassis_l} ${chassis_w} ${chassis_h}"/></geometry>
+      <material name="azul"><color rgba="0.1 0.3 0.8 1.0"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="${chassis_l} ${chassis_w} ${chassis_h}"/></geometry>
+    </collision>
+    <xacro:inertial_box mass="${chassis_m}" x="${chassis_l}" y="${chassis_w}" z="${chassis_h}"/>
+  </link>
+  <joint name="chassis_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis_link"/>
+    <origin xyz="0 0 ${chassis_z}" rpy="0 0 0"/>
+  </joint>
+  <gazebo reference="chassis_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <xacro:macro name="wheel" params="side y_sign">
+    <link name="${side}_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+        <material name="negro"><color rgba="0.05 0.05 0.05 1.0"/></material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${-pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </collision>
+      <xacro:inertial_cylinder_y mass="${wheel_m}" r="${wheel_radius}" l="${wheel_width}"/>
+    </link>
+    <joint name="${side}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${side}_wheel_link"/>
+      <origin xyz="0 ${y_sign * wheel_separation / 2.0} 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+    <gazebo reference="${side}_wheel_link">
+      <mu1>1.0</mu1>
+      <mu2>1.0</mu2>
+    </gazebo>
+  </xacro:macro>
+  <xacro:wheel side="left" y_sign="1"/>
+  <xacro:wheel side="right" y_sign="-1"/>
+
+  <xacro:macro name="caster" params="name x">
+    <link name="${name}_caster_link">
+      <visual><geometry><sphere radius="${caster_radius}"/></geometry>
+        <material name="gris"><color rgba="0.6 0.6 0.6 1.0"/></material></visual>
+      <collision><geometry><sphere radius="${caster_radius}"/></geometry></collision>
+      <xacro:inertial_sphere mass="${caster_m}" r="${caster_radius}"/>
+    </link>
+    <joint name="${name}_caster_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${name}_caster_link"/>
+      <origin xyz="${x} 0 ${caster_radius - wheel_radius}" rpy="0 0 0"/>
+    </joint>
+    <gazebo reference="${name}_caster_link">
+      <mu1>0.0</mu1>
+      <mu2>0.0</mu2>
+    </gazebo>
+  </xacro:macro>
+  <xacro:caster name="front" x="${caster_x}"/>
+  <xacro:caster name="rear" x="${-caster_x}"/>
+
+  <xacro:include filename="sensors.xacro"/>
+
+  <xacro:if value="$(arg use_ros2_control)">
+    <xacro:include filename="ros2_control.xacro"/>
+    <xacro:ros2_control_block/>
+  </xacro:if>
+
+  <xacro:unless value="$(arg use_ros2_control)">
+    <xacro:include filename="gz_control.xacro"/>
+  </xacro:unless>
+
+</robot>
