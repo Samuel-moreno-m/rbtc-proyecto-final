@@ -11,6 +11,10 @@ Robot diferencial `dif_bot` (IMU, LiDAR 2D y cámara) simulado en Gazebo. El pro
 | 5. Navegación | Nav2: NavFn + Regulated Pure Pursuit + BT con recuperaciones | `config/nav2_params.yaml`, `launch/navigation.launch.py` |
 | Proyecto final | Nodo de misiones con `nav2_simple_commander`, servicio de inicio y waypoints en YAML | paquete `dif_bot_mission` |
 
+**Video demostrativo:** [video/video_mision_rbtc.mp4](video/video_mision_rbtc.mp4). Muestra la misión de 7 waypoints con Gazebo, RViz y terminales: 7/7 alcanzados, 0 fallos, 8 min 13 s.
+
+**Integrantes:** Samuel Jerónimo Moreno Mora, Esteban Pineda, Joshua Tapias · **Profesor:** Ing. Daniel Palomino Suárez, MSc. · Escuela Colombiana de Ingeniería Julio Garavito
+
 Probado en **Ubuntu 24.04 + ROS 2 Kilted + Gazebo Ionic (gz-sim 9)**. En Jazzy (Gazebo Harmonic) también funciona; ver la sección de compatibilidad al final.
 
 ## Estructura
