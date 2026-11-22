@@ -1,15 +1,15 @@
 # Proyecto Final RBTC: navegación autónoma con ROS 2, Gazebo y Nav2
 
-Robot diferencial `dif_bot` (IMU, LiDAR 2D y cámara) simulado en Gazebo. El proyecto cubre el pipeline completo:
+Robot diferencial `dif_bot` (IMU, LiDAR 2D y cámara) simulado en Gazebo. El proyecto cubre el pipeline completo. **Cada práctica tiene su propia carpeta en [`practicas/`](practicas/README.md)** con objetivo, archivos, comandos, resultados y capturas:
 
-| Práctica | Qué se hace | Archivos principales |
+| Práctica | Qué se hace | Documentación |
 |---|---|---|
-| 1. Control y odometría | Plugin DiffDrive de Gazebo **vs.** `ros2_control` (`diff_drive_controller`) | `urdf/robot.urdf.xacro`, `urdf/gz_control.xacro`, `urdf/ros2_control.xacro`, `config/controllers*.yaml`, `launch/sim.launch.py` |
-| 2. Fusión sensorial | EKF 2D (`robot_localization`): odometría + IMU, publica `/odom_filtered` | `config/ekf.yaml` |
-| 3. SLAM | SLAM Toolbox (online async), mapa en `maps/` | `config/slam_toolbox.yaml`, `launch/slam.launch.py`, `maps/warehouse.*` |
-| 4. Localización | AMCL + map_server | `config/amcl.yaml`, `launch/localization.launch.py` |
-| 5. Navegación | Nav2: NavFn + Regulated Pure Pursuit + BT con recuperaciones | `config/nav2_params.yaml`, `launch/navigation.launch.py` |
-| Proyecto final | Nodo de misiones con `nav2_simple_commander`, servicio de inicio y waypoints en YAML | paquete `dif_bot_mission` |
+| 1. Control y odometría | Plugin DiffDrive de Gazebo **vs.** `ros2_control` (`diff_drive_controller`) | [practicas/practica1_control_odometria](practicas/practica1_control_odometria/README.md) |
+| 2. Fusión sensorial | EKF 2D (`robot_localization`): odometría + IMU, publica `/odom_filtered` | [practicas/practica2_fusion_ekf](practicas/practica2_fusion_ekf/README.md) |
+| 3. SLAM | SLAM Toolbox (online async), mapa en `maps/` | [practicas/practica3_slam](practicas/practica3_slam/README.md) |
+| 4. Localización | AMCL + map_server | [practicas/practica4_amcl](practicas/practica4_amcl/README.md) |
+| 5. Navegación | Nav2: NavFn + Regulated Pure Pursuit + BT con recuperaciones | [practicas/practica5_nav2](practicas/practica5_nav2/README.md) |
+| Proyecto final | Nodo de misiones con `nav2_simple_commander`, servicio de inicio y waypoints en YAML | [practicas/proyecto_final_misiones](practicas/proyecto_final_misiones/README.md) |
 
 **Video demostrativo:** [video/video_mision_rbtc.mp4](video/video_mision_rbtc.mp4). Muestra la misión de 7 waypoints con Gazebo, RViz y terminales: 7/7 alcanzados, 0 fallos, 8 min 13 s.
 
@@ -20,7 +20,10 @@ Probado en **Ubuntu 24.04 + ROS 2 Kilted + Gazebo Ionic (gz-sim 9)**. En Jazzy (
 ## Estructura
 
 ```
-rbtc_ws/src/
+rbtc_ws/
+├── practicas/                    # una carpeta por práctica: README + capturas
+├── video/                        # video demostrativo del proyecto final
+└── src/
 ├── dif_bot/                      # robot, simulación y configuración de navegación
 │   ├── urdf/        robot.urdf.xacro, gz_control.xacro, ros2_control.xacro, sensors.xacro, ...
 │   ├── config/      controllers.yaml, controllers_ekf.yaml, ekf.yaml, slam_toolbox.yaml,
